@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {
@@ -23,13 +24,6 @@ class AuthController extends Controller
                 'status' => 'error',
                 'message' => 'Username atau password salah'
             ], 401);
-        }
-
-        if ($request->user()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Anda sudah login, logout terlebih dahulu'
-            ], 403);
         }
 
         $token = $admin->createToken('admin-token')->plainTextToken;

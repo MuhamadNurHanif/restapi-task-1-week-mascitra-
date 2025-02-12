@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
 
-Route::prefix('api/v1')->group(function () {
-    Route::post('/login', [AuthController::class, 'login']);
+Route::prefix('v1')->group(function () {
+    // auth
+    Route::middleware('guest')->post('/login', [AuthController::class, 'login']);
 });
