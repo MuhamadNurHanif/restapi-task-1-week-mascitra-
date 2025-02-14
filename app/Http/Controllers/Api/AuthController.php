@@ -7,6 +7,7 @@ use App\Models\Admin;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -42,5 +43,38 @@ class AuthController extends Controller
                 ]
             ]
         ]);
+    }
+
+    public function logout(Request $request)
+    {
+        if (!$request->user()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthenticated'
+            ], 401);
+        }
+
+        try {
+            $userId = $request->user()->id;
+            $request->user()->currentAccessToken()->delete();
+
+            Log::info('User logged out successfully', ['user_id' => $userId]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Logout berhasil'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error during logout', [
+                'user_id' => $request->user()->id ?? null,
+                'ip' => $request->ip(),
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Logout gagal, silakan coba lagi'
+            ], 500);
+        }
     }
 }
