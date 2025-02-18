@@ -83,7 +83,7 @@ class EmployeeController extends Controller
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('employees', 'public');
             $employee->image = $imagePath;
-    }
+        }
 
         $employee->update([
             'name' => $request->name,
