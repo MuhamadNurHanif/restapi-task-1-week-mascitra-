@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Models\Admin;
+use App\Models\user;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -14,32 +14,32 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'username' => 'required',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        $admin = Admin::where('username', $request->username)->first();
+        $user = user::where('email', $request->email)->first();
 
-        if (!$admin || !Hash::check($request->password, $admin->password)) {
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Username atau password salah'
             ], 401);
         }
 
-        $token = $admin->createToken('admin-token')->plainTextToken;
+        $token = $user->createToken('user-token')->plainTextToken;
 
         return response()->json([
             'status' => 'success',
             'message' => 'Login berhasil',
             'data' => [
                 'token' => $token,
-                'admin' => [
-                    'id' => $admin->id,
-                    'name' => $admin->name,
-                    'username' => $admin->username,
-                    'phone' => $admin->phone,
-                    'email' => $admin->email,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'username' => $user->username,
+                    'phone' => $user->phone,
+                    'email' => $user->email,
                 ]
             ]
         ]);

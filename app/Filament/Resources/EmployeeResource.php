@@ -16,11 +16,12 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Actions\DeleteAction;
 use App\Filament\Resources\EmployeeResource\Pages;
 use Intervention\Image\Facades\Image;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
 
 
 
-class EmployeeResource extends Resource
+class EmployeeResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Employee::class;
 
@@ -49,14 +50,7 @@ class EmployeeResource extends Resource
                 ->nullable()
                 ->disk('public')
                 ->directory('employees')
-            // ->afterSaving(function ($file) {
-            //     $img = Image::make($file->getRealPath());
-            //     $img->resize(800, 800, function ($constraint) {
-            //         $constraint->aspectRatio();
-            //         $constraint->upsize();
-            //     });
-            //     $img->save($file->getRealPath());
-            // }),
+                ->previewable(false)
         ]);
     }
 
@@ -90,6 +84,19 @@ class EmployeeResource extends Resource
             'index' => Pages\ListEmployees::route('/'),
             'create' => Pages\CreateEmployee::route('/create'),
             'edit' => Pages\EditEmployee::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'publish'
         ];
     }
 }

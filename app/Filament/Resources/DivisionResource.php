@@ -13,14 +13,25 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Actions\DeleteAction;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Filament\Forms\Components\TextInput;
 
-class DivisionResource extends Resource
+class DivisionResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Division::class;
 
     protected static ?string $navigationGroup = 'Divisi';
 
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
+
+    public static function form(Form $form): Form
+    {
+        return $form->schema([
+            TextInput::make('name')
+                ->required()
+                ->maxLength(255),
+        ]);
+    }
 
     public static function table(Table $table): Table
     {
@@ -57,6 +68,19 @@ class DivisionResource extends Resource
             'index' => Pages\ListDivisions::route('/'),
             'create' => Pages\CreateDivision::route('/create'),
             'edit' => Pages\EditDivision::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'publish'
         ];
     }
 }
